@@ -55,7 +55,14 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(long id, String name, String lastname, byte age) {
-
+        try (Session session = Util.getSession().openSession()){
+            Transaction transaction = session.beginTransaction();
+            session.save(new User(id,name,lastname,age));
+            System.out.println("User is write");
+            transaction.commit();
+        }catch (HibernateException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -63,7 +70,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = Util.getSession().openSession()) {
             Transaction transaction = session.beginTransaction();
             session.remove(session.get(User.class, id));
-            System.out.println("Объект удалён");
+            System.out.println("Object is removed");
             transaction.commit();
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -89,7 +96,7 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = Util.getSession().openSession()){
             session.beginTransaction();
             session.createNativeQuery("DELETE FROM users").executeUpdate();
-            System.out.println("Список юзеров удалён");
+            System.out.println("Table is clean");
             session.getTransaction().commit();
         }catch (HibernateException e)
         {
