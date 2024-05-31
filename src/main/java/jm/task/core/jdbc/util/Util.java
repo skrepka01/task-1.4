@@ -18,27 +18,8 @@ public class Util {
     public Util() {
     }
 
-    public static Connection connected() {
-        try {
-            connection = DriverManager.getConnection(URL, NAME, PASSWORD);
-            return connection;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void setQuery(String sql) {
-        try (Connection connection = connected()) {
-            Statement statement = createStatement(connection);
-            if (statement == null) {
-                return;
-            }
-            statement.executeQuery(sql);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            return;
-        }
+    public static Connection connected() throws SQLException {
+        return connection = DriverManager.getConnection(URL,NAME,PASSWORD);
     }
 
     public static SessionFactory getSession(){
@@ -46,43 +27,4 @@ public class Util {
         return configuration.buildSessionFactory();
     }
 
-    private static Statement createStatement(Connection connection) {
-        try {
-            if (connection == null) {
-                return null;
-            }
-            return connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-
-    public static class SQLGetter {
-
-        public static List<User> getList() {
-            List<User> list = new ArrayList<>();
-            try {
-                Connection connection1 = DriverManager.getConnection(URL, NAME, PASSWORD);
-                Statement statement = connection1.createStatement();
-                ResultSet resultSet = statement.executeQuery("SELECT * FROM users12");
-                if (!resultSet.next()) {
-                    resultSet.close();
-                    statement.close();
-                    connection1.close();
-                }
-                while (resultSet.next()){
-                    long id = resultSet.getInt("id");
-                    String name = resultSet.getString("NAME");
-                    //list.add(new User(id,name));
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-
-            }return list;
-        }
-    }
 }
